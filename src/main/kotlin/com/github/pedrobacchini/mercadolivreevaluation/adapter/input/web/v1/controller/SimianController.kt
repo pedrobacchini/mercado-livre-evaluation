@@ -4,15 +4,20 @@ import com.github.pedrobacchini.mercadolivreevaluation.adapter.input.web.v1.api.
 import com.github.pedrobacchini.mercadolivreevaluation.adapter.input.web.v1.api.request.SimianAnalysisRequest
 import com.github.pedrobacchini.mercadolivreevaluation.adapter.input.web.v1.api.response.SimianAnalysisResponse
 import com.github.pedrobacchini.mercadolivreevaluation.adapter.input.web.v1.converter.toDomain
+import com.github.pedrobacchini.mercadolivreevaluation.adapter.input.web.v1.converter.toResponse
+import com.github.pedrobacchini.mercadolivreevaluation.application.port.input.SimianAnalysisUseCase
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class SimianController : SimianApi {
+class SimianController(
+    private val simianAnalysisUseCase: SimianAnalysisUseCase
+) : SimianApi {
 
     override fun simianAnalysis(
         simianAnalysisRequest: SimianAnalysisRequest
     ): SimianAnalysisResponse {
-        val toDomain = simianAnalysisRequest.toDomain()
-        return SimianAnalysisResponse(false)
+        val simianAnalysis = simianAnalysisRequest.toDomain()
+        simianAnalysisUseCase.execute(simianAnalysis)
+        return simianAnalysis.toResponse()
     }
 }
