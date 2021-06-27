@@ -6,4 +6,4 @@ import com.github.pedrobacchini.mercadolivreevaluation.application.domain.Simian
 
 fun SimianAnalysisRequest.toDomain() = SimianAnalysis(this.dna.map { it.toList() })
 
-fun SimianAnalysis.toResponse() = SimianAnalysisResponse(this.isSimian)
+fun SimianAnalysis.toResponse() = SimianAnalysisResponse(this.isSimian())
