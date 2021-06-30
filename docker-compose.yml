@@ -1,0 +1,16 @@
+version: "3.3"
+services:
+  localstack:
+    build: ./localstack
+    container_name: localstack
+    environment:
+      - SERVICES=dynamodb
+      - AWS_ACCESS_KEY_ID=123
+      - AWS_SECRET_ACCESS_KEY=6m0l/6AHSJVMAWCTY0XJ30qSnI2dl00r1U1PZL4z
+      - AWS_SECRET_KEY=xyz
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_OUTPUT=json
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./localstack/data:/tmp/localstack/data
