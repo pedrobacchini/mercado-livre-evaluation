@@ -9,6 +9,6 @@ data class SimianAnalysisRequest(
     @field:NotEmpty
     @field:NoNullElements
     @field:ListElementsSameSize
-    @field:ListPattern(regexp = ".*([ATCG])")
+    @field:ListPattern(regexp = "^[ACGT]*\$")
     val dna: List<String>
 )
