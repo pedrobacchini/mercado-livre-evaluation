@@ -5,4 +5,6 @@ import com.github.pedrobacchini.mercadolivreevaluation.application.domain.Simian
 interface SimianAnalysisRepositoryPort {
 
     fun save(simianAnalysis: SimianAnalysis)
+
+    fun findSequenceByDna(dna: List<List<Char>>): List<SimianAnalysis.Sequence>?
 }

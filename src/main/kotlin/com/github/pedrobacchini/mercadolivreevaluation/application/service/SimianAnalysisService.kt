@@ -13,9 +13,13 @@ class SimianAnalysisService(
     override fun execute(simianAnalysis: SimianAnalysis) {
 
         simianAnalysis.apply {
-            analysis()
 
-            save(simianAnalysisRepositoryPort)
+            if (validateNotDuplicatedAnalysis(simianAnalysisRepositoryPort)) {
+
+                analysis()
+
+                save(simianAnalysisRepositoryPort)
+            }
         }
     }
 }

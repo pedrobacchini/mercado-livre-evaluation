@@ -41,6 +41,13 @@ data class SimianAnalysis(
         return Collections.unmodifiableList(sequences)
     }
 
+
+    fun validateNotDuplicatedAnalysis(simianAnalysisRepositoryPort: SimianAnalysisRepositoryPort) =
+        simianAnalysisRepositoryPort.findSequenceByDna(dna)?.let {
+            this.sequences.addAll(it)
+            false
+        } ?: run { true }
+
     fun analysis() {
         dna.forEachIndexed { x, chars ->
             chars.forEachIndexed { y, aChar ->
