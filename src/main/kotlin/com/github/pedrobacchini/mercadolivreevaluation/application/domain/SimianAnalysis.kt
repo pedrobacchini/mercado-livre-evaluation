@@ -1,6 +1,8 @@
 package com.github.pedrobacchini.mercadolivreevaluation.application.domain
 
 import com.github.pedrobacchini.mercadolivreevaluation.application.port.output.SimianAnalysisRepositoryPort
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.*
 
 data class SimianAnalysis(
@@ -17,6 +19,7 @@ data class SimianAnalysis(
         private const val NORTH_WEST_COUNT_INDEX = 1
         private const val NORTH_COUNT_INDEX = 2
         private const val NORTH_EAST_COUNT_INDEX = 3
+        private val logger: Logger = LoggerFactory.getLogger(SimianAnalysis::class.java)
     }
 
     data class Sequence(
@@ -41,14 +44,17 @@ data class SimianAnalysis(
         return Collections.unmodifiableList(sequences)
     }
 
-
     fun validateNotDuplicatedAnalysis(simianAnalysisRepositoryPort: SimianAnalysisRepositoryPort) =
         simianAnalysisRepositoryPort.findSequenceByDna(dna)?.let {
+            logger.info("Simian analysis already processed reuse analysis")
             this.sequences.addAll(it)
             false
         } ?: run { true }
 
     fun analysis() {
+
+        logger.info("Starting process a new simian analysis")
+
         dna.forEachIndexed { x, chars ->
             chars.forEachIndexed { y, aChar ->
                 westAnalysis(x, y, aChar)
@@ -57,6 +63,8 @@ data class SimianAnalysis(
                 northEastAnalysis(x, y, aChar)
             }
         }
+
+        logger.info("Done process to new simian analysis")
     }
 
     private fun westAnalysis(x: Int, y: Int, aChar: Char) {
