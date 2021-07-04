@@ -37,8 +37,4 @@ data class DirectionalPoint(
         }
         return this.copy()
     }
-
-    override fun toString(): String {
-        return "Point(x=$x, y=$y)"
-    }
 }

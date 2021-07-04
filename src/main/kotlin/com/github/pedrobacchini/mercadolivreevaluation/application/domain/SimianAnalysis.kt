@@ -32,10 +32,6 @@ data class SimianAnalysis(
             DIAGONAL_LEFT,
             DIAGONAL_RIGHT
         }
-
-        override fun toString(): String {
-            return "Sequence(type=$type, points=$directionalPoints)"
-        }
     }
 
     fun isSimian() = sequences.size >= MIM_SEQUENCES
@@ -44,12 +40,12 @@ data class SimianAnalysis(
         return Collections.unmodifiableList(sequences)
     }
 
-    fun validateNotDuplicatedAnalysis(simianAnalysisRepositoryPort: SimianAnalysisRepositoryPort) =
+    fun retrieveAnalysis(simianAnalysisRepositoryPort: SimianAnalysisRepositoryPort) =
         simianAnalysisRepositoryPort.findSequenceByDna(dna)?.let {
-            logger.info("Simian analysis already processed reuse analysis")
+            logger.info("Simian analysis already processed retrieve analysis")
             this.sequences.addAll(it)
-            false
-        } ?: run { true }
+            true
+        } ?: run { false }
 
     fun analysis() {
 

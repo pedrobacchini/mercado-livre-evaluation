@@ -14,12 +14,11 @@ class SimianAnalysisService(
 
         simianAnalysis.apply {
 
-            if (validateNotDuplicatedAnalysis(simianAnalysisRepositoryPort)) {
+            if (retrieveAnalysis(simianAnalysisRepositoryPort)) return
 
-                analysis()
+            analysis()
 
-                save(simianAnalysisRepositoryPort)
-            }
+            save(simianAnalysisRepositoryPort)
         }
     }
 }
