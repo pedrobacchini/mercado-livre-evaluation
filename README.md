@@ -47,13 +47,13 @@ Faça a hospedagem da ***API*** em algum ambiente de computação em nuvem ***gr
 
 ## Execute o Projeto com Docker.
 
-####**Passo 1:** Certifique-se que possui o docker-compose instalado e execute o comando na raiz do projeto
+#### Passo 1: Certifique-se que possui o docker-compose instalado e execute o comando na raiz do projeto
 
 ```
 docker-compose up -d
 ```
 
-####**Passo 2:** Certifique-se que possui o maven instalado e execute o comando na raiz do projeto
+#### Passo 2: Certifique-se que possui o maven instalado e execute o comando na raiz do projeto
 
 ```
 mvn spring-boot:run
