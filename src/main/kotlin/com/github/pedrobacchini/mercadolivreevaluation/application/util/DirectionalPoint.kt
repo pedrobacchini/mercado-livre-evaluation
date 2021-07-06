@@ -1,4 +1,4 @@
-package com.github.pedrobacchini.mercadolivreevaluation.application.domain
+package com.github.pedrobacchini.mercadolivreevaluation.application.util
 
 data class DirectionalPoint(
     var x: Int,

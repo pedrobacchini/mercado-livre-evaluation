@@ -1,6 +1,7 @@
 package com.github.pedrobacchini.mercadolivreevaluation.application.domain
 
 import com.github.pedrobacchini.mercadolivreevaluation.application.port.output.SimianAnalysisRepositoryPort
+import com.github.pedrobacchini.mercadolivreevaluation.application.util.DirectionalPoint
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
