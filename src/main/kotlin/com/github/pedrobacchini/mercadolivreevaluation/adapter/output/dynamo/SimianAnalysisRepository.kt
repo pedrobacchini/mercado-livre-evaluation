@@ -56,7 +56,7 @@ class SimianAnalysisRepository(
 
         val withExpressionAttributeValues = DynamoDBQueryExpression<SimianAnalysisEntity>()
             .withIndexName(SkIndex)
-            .withConsistentRead(true)
+            .withConsistentRead(false)
             .withKeyConditionExpression(expression)
             .withExpressionAttributeValues(valueMap)
 
