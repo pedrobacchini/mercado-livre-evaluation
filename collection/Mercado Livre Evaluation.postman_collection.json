@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "a2389533-869c-4364-9c79-677aeb4da3dd",
+		"name": "Mercado Livre Evaluation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Simian Analysis - Simian",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dna\": [\n       \"CTAGGTCG\",\n        \"TATGCATC\",\n        \"CAATGCTA\",\n        \"ATCATGAG\",\n        \"GTAGATCT\",\n        \"TTTTCAGC\",\n        \"CAGGTCGT\",\n        \"GCCCCTAG\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/simian",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"simian"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Simian Analysis - Human",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dna\": [\n        \"CTCCAG\",\n        \"ATGCAT\",\n        \"TAGCTT\",\n        \"GTCGGG\",\n        \"AGTAGT\",\n        \"CTACCG\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/simian",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"simian"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve Simian Analysis Stats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/simian/stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"simian",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
