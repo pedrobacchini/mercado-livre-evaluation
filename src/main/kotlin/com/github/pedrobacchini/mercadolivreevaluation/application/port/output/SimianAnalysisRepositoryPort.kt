@@ -7,4 +7,6 @@ interface SimianAnalysisRepositoryPort {
     fun save(simianAnalysis: SimianAnalysis)
 
     fun findSequenceByDna(dna: List<List<Char>>): List<SimianAnalysis.Sequence>?
+
+    fun countSimianAnalysisByResultType(resultType: String): Int
 }

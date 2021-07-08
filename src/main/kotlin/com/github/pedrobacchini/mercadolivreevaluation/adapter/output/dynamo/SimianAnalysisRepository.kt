@@ -2,6 +2,7 @@ package com.github.pedrobacchini.mercadolivreevaluation.adapter.output.dynamo
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression
+import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.github.pedrobacchini.mercadolivreevaluation.adapter.output.dynamo.converter.toEntity
 import com.github.pedrobacchini.mercadolivreevaluation.adapter.output.dynamo.entity.SimianAnalysisEntity
 import com.github.pedrobacchini.mercadolivreevaluation.application.domain.SimianAnalysis
@@ -15,6 +16,10 @@ import org.springframework.stereotype.Repository
 class SimianAnalysisRepository(
     val dynamoDBMapper: DynamoDBMapper
 ) : SimianAnalysisRepositoryPort {
+
+    companion object {
+        private const val SkIndex = "SkIndex"
+    }
 
     private val logger: Logger = LoggerFactory.getLogger(SimianAnalysis::class.java)
 
@@ -41,5 +46,22 @@ class SimianAnalysisRepository(
             .map { it.sequences.jsonToObject(mutableListOf<SimianAnalysis.Sequence>().javaClass) }
             .firstOrNull()
             .also { logger.info("Done process to find a sequence by dna:[{}] found Sequence:[{}]", dna, it) }
+    }
+
+    override fun countSimianAnalysisByResultType(resultType: String): Int {
+        logger.info("Starting process to count simian analysis resultType:[{}]", resultType)
+
+        val expression = "sk = :sk"
+        val valueMap = mapOf(":sk" to AttributeValue(resultType))
+
+        val withExpressionAttributeValues = DynamoDBQueryExpression<SimianAnalysisEntity>()
+            .withIndexName(SkIndex)
+            .withConsistentRead(true)
+            .withKeyConditionExpression(expression)
+            .withExpressionAttributeValues(valueMap)
+
+        return dynamoDBMapper.query(SimianAnalysisEntity::class.java, withExpressionAttributeValues)
+            .count()
+            .also { logger.info("Done process count simian analysis by resultType:[{}] found:[{}]", resultType, it) }
     }
 }
