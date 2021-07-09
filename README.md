@@ -5,7 +5,9 @@
 2. Guia de Bordo de Execução
     1. [Execute o Projeto com o Docker](#execute-o-projeto-com-docker)
     1. [Testes](#testes)
+    1. [Deploy Elastic Beanstalk](#deploy-elastic-beanstalk)
     1. [Contatos](#contatos)
+    1. [URL Deployed API](#url-deployed-api)
 
 ## Introdução
 
@@ -59,7 +61,6 @@ docker-compose up -d
 mvn spring-boot:run
 ```
 
-
 ## Testes
 
 ### Testes de unidade
@@ -86,6 +87,86 @@ curl --location --request POST 'http://localhost:8080/v1/simian' --header 'Conte
 curl --location --request POST 'http://localhost:8080/v1/simian' --header 'Content-Type: application/json' --data-raw '{"dna": ["CTAGGTCG","TATGCATC","CAATGCTA","ATCATGAG","GTAGATCT","TTTTCAGC","CAGGTCGT","GCCCCTAG"]}'
 ```
 
+##### Exemplo de payload para consulta de status de analises
+
+```
+curl --location --request GET 'http://localhost:8080/v1/simian/stats'
+```
+
+### Deploy Elastic Beanstalk
+
+#### Build Docker
+
+```
+mvn spring-boot:build-image -DexcludedGroups=integration
+```
+
+#### Run Docker
+
+Run the spring boot app locally
+
+```
+docker run -it -p 8080:8080 mercado-livre-evaluation:1.0.0
+```
+
+#### Tag the Docker image
+
+Tag the docker image and point at remote registry
+
+```
+docker tag mercado-livre-evaluation:1.0.0 <accountId>.dkr.ecr.us-east-1.amazonaws.com/mercado-livre-evaluation:1.0.0
+```
+
+#### Docker Login to AWS ECR
+
+Give docker permissions to access AWS ECR
+
+```
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <accountId>.dkr.ecr.us-east-1.amazonaws.com
+```
+
+#### Create Repository
+
+```
+aws ecr create-repository --repository-name mercado-livre-evaluation
+```
+
+#### Push to AWS ECR
+
+Push the docker image to ECR.
+
+```
+docker push <accountId>.dkr.ecr.us-east-1.amazonaws.com/mercado-livre-evaluation:1.0.0
+```
+
+#### Create the Beanstalk Application
+
+Initialize the project with AWS CLI. It should ask what kind of environment you want to create. Select Docker single
+instance.
+
+```
+cd elasticbeanstalk
+eb init
+```
+
+#### Create Environment
+
+This will create a new environment where the docker container will be deployed
+
+```
+eb create
+```
+
+#### Deploy the Application
+
+```
+eb deploy
+```
+
 ### Contatos
 
 Pedro Henrique Franco Bacchini - pedrobacchini@outlook.com
+
+### URL Deployed API
+
+http://mercado-livre-evaluation-dev.us-east-1.elasticbeanstalk.com/

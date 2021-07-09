@@ -1,0 +1,13 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "990281288064.dkr.ecr.us-east-1.amazonaws.com/mercado-livre-evaluation:1.0.0",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "hostPort": "80",
+      "ContainerPort": "8080"
+    }
+  ]
+}
