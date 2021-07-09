@@ -12,16 +12,16 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class DynamoDBConfiguration {
 
-    @Value("\${amazon.dynamodb.endpoint:http://localhost:4566}")
+    @Value("\${amazon.dynamodb.endpoint}")
     private lateinit var amazonDynamoDBEndpoint: String
 
-    @Value("\${amazon.region:us-east-1}")
+    @Value("\${amazon.region}")
     private lateinit var amazonRegion: String
 
-    @Value("\${amazon.aws.accesskey:mel}")
+    @Value("\${amazon.aws.accesskey}")
     private lateinit var amazonAWSAccessKey: String
 
-    @Value("\${amazon.aws.secretKey:mel}")
+    @Value("\${amazon.aws.secretKey}")
     private lateinit var amazonAWSSecretKey: String
 
     @Bean

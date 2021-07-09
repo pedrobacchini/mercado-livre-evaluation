@@ -13,5 +13,5 @@ fun SimianAnalysis.toResponse() = SimianAnalysisResponse(this.isSimian())
 fun SimianAnalysisStats.toResponse() = SimianAnalysisStatsResponse(
     countSimianDna = countSimianDna,
     countHumanDna = countHumanDna,
-    ratio = (countSimianDna.toFloat()/countHumanDna)
+    ratio = if(countHumanDna != 0) (countSimianDna.toFloat()/countHumanDna) else null
 )
