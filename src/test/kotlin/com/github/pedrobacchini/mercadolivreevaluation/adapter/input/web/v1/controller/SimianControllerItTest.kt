@@ -1,11 +1,17 @@
 package com.github.pedrobacchini.mercadolivreevaluation.adapter.input.web.v1.controller
 
+import com.github.pedrobacchini.mercadolivreevaluation.application.port.input.SimianAnalysisStatsUseCase
+import com.github.pedrobacchini.mercadolivreevaluation.application.port.input.SimianAnalysisUseCase
 import com.github.pedrobacchini.mercadolivreevaluation.extension.objectToJson
+import com.github.pedrobacchini.mercadolivreevaluation.helper.dummyObject
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -13,12 +19,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Tag(value = "integration")
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(controllers = [SimianController::class])
 internal class SimianControllerItTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @MockBean
+    private lateinit var simianAnalysisUseCase: SimianAnalysisUseCase
+
+    @MockBean
+    private lateinit var simianAnalysisStatsUseCase: SimianAnalysisStatsUseCase
 
     private val analysisSimianRequestBuilder = post("/v1/simian")
         .contentType(MediaType.APPLICATION_JSON)
@@ -77,6 +88,9 @@ internal class SimianControllerItTest {
 
     @Test
     fun `should return stats of analysis simian`() {
+
+        whenever(simianAnalysisStatsUseCase.execute()).thenReturn(dummyObject())
+
         mockMvc.perform(
             get("/v1/simian/stats")
                 .accept(MediaType.APPLICATION_JSON)
