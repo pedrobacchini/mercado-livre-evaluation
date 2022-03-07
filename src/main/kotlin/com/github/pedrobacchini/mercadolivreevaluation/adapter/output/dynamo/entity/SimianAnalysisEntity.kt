@@ -1,17 +1,17 @@
 package com.github.pedrobacchini.mercadolivreevaluation.adapter.output.dynamo.entity
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey
 
+@DynamoDbBean
 data class SimianAnalysisEntity(
 
-    @DynamoDBHashKey(attributeName = "pk")
+    @get:DynamoDbPartitionKey
     var pk: String = "",
 
-    @DynamoDBRangeKey(attributeName = "sk")
+    @get:DynamoDbSortKey
     var sk: String = "",
 
-    @DynamoDBAttribute(attributeName = "sequences")
     var sequences: String = ""
 )

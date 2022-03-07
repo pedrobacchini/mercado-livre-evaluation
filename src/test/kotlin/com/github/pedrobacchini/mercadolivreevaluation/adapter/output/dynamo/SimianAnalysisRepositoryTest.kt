@@ -1,8 +1,5 @@
 package com.github.pedrobacchini.mercadolivreevaluation.adapter.output.dynamo
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList
 import com.github.pedrobacchini.mercadolivreevaluation.adapter.output.dynamo.entity.SimianAnalysisEntity
 import com.github.pedrobacchini.mercadolivreevaluation.application.domain.SimianAnalysis
 import com.github.pedrobacchini.mercadolivreevaluation.helper.dummyObject
@@ -12,17 +9,34 @@ import com.github.pedrobacchini.mercadolivreevaluation.helper.validSimianAnalysi
 import com.nhaarman.mockitokotlin2.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import software.amazon.awssdk.core.pagination.sync.SdkIterable
+import software.amazon.awssdk.enhanced.dynamodb.*
+import software.amazon.awssdk.enhanced.dynamodb.model.Page
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
+import java.util.function.Consumer
 import java.util.stream.Stream
 
 internal class SimianAnalysisRepositoryTest {
 
-    private val dynamoDBMapper: DynamoDBMapper = mock()
+    private val dynamoDbEnhancedClient: DynamoDbEnhancedClient = mock()
+    private val dynamoDbTable: DynamoDbTable<SimianAnalysisEntity> = mock()
 
-    private val simianAnalysisRepository = SimianAnalysisRepository(dynamoDBMapper)
+
+    private val tableName = "tableName"
+    private lateinit var simianAnalysisRepository: SimianAnalysisRepository
+
+    @BeforeEach
+    fun setup() {
+        whenever(dynamoDbEnhancedClient.table(eq(tableName), any<TableSchema<SimianAnalysisEntity>>()))
+            .thenReturn(dynamoDbTable)
+        simianAnalysisRepository = SimianAnalysisRepository(tableName, dynamoDbEnhancedClient)
+    }
 
     @ParameterizedTest
     @MethodSource("generateValidSimianAnalysis")
@@ -34,7 +48,7 @@ internal class SimianAnalysisRepositoryTest {
         simianAnalysisRepository.save(expectedSimianAnalysis)
 
         val dynamoDBMapperCaptor = argumentCaptor<SimianAnalysisEntity>()
-        verify(dynamoDBMapper).save(dynamoDBMapperCaptor.capture())
+        verify(dynamoDbTable, times(1)).putItem(dynamoDBMapperCaptor.capture())
         val capturedSimianAnalysis = dynamoDBMapperCaptor.firstValue
 
         assertEquals(expectedSimianAnalysis.dna.hashCode().toString(), capturedSimianAnalysis.pk)
@@ -51,36 +65,37 @@ internal class SimianAnalysisRepositoryTest {
     }
 
     @Test
-    fun `should find all sequences by dna`() {
+    fun `should find sequence by dna`() {
+        whenever(dynamoDbTable.getItem(any<Key>()))
+            .thenReturn(validSimianAnalysisEntity())
 
-        val validSimianAnalysisEntity = validSimianAnalysisEntity()
-        val queryReturnMock: PaginatedQueryList<SimianAnalysisEntity> = mock()
-        val iteratorMock: MutableIterator<SimianAnalysisEntity> = mock()
-        whenever(queryReturnMock.iterator()).thenReturn(iteratorMock)
-        whenever(iteratorMock.hasNext()).thenReturn(true).thenReturn(false)
-        whenever(iteratorMock.next()).thenReturn(validSimianAnalysisEntity)
-        whenever(dynamoDBMapper.query(any(), any<DynamoDBQueryExpression<SimianAnalysisEntity>>()))
-            .thenReturn(queryReturnMock)
-
-        val findSequenceByDna = simianAnalysisRepository.findSequenceByDna(dummyObject())
+        val dna = dummyObject<List<List<Char>>>()
+        val findSequenceByDna = simianAnalysisRepository.findSequenceByDna(dna)
 
         assertNotNull(findSequenceByDna)
-        verify(dynamoDBMapper, times(1)).query(any(), any<DynamoDBQueryExpression<SimianAnalysisEntity>>())
+        val keyCaptor = argumentCaptor<Key>()
+        verify(dynamoDbTable, times(1)).getItem(keyCaptor.capture())
+        val key = keyCaptor.firstValue
+
+        assertEquals(dna.hashCode().toString(), key.partitionKeyValue().s())
     }
 
     @Test
     fun `should count simian analysis by resultType`() {
 
-        val queryReturnMock: PaginatedQueryList<SimianAnalysisEntity> = mock()
-        val iteratorMock: MutableIterator<SimianAnalysisEntity> = mock()
+        val dynamoDbIndex: DynamoDbIndex<SimianAnalysisEntity> = mock()
+        val queryReturnMock: SdkIterable<Page<SimianAnalysisEntity>> = mock()
+        val iteratorMock: MutableIterator<Page<SimianAnalysisEntity>> = mock()
         whenever(queryReturnMock.iterator()).thenReturn(iteratorMock)
         whenever(iteratorMock.hasNext()).thenReturn(true).thenReturn(false)
-        whenever(iteratorMock.next()).thenReturn(validSimianAnalysisEntity())
-        whenever(dynamoDBMapper.query(any(), any<DynamoDBQueryExpression<SimianAnalysisEntity>>()))
-            .thenReturn(queryReturnMock)
+        whenever(iteratorMock.next()).thenReturn(Page.create(listOf(validSimianAnalysisEntity())))
+        whenever(dynamoDbTable.index(any())).thenReturn(dynamoDbIndex)
+        whenever(dynamoDbIndex.query(any<Consumer<QueryEnhancedRequest.Builder>>()))
+            .thenReturn(PageIterable.create(queryReturnMock))
 
         simianAnalysisRepository.countSimianAnalysisByResultType("simian")
 
-        verify(dynamoDBMapper, times(1)).query(any(), any<DynamoDBQueryExpression<SimianAnalysisEntity>>())
+        verify(dynamoDbTable, times(1)).index(any())
+        verify(dynamoDbIndex, times(1)).query(any<Consumer<QueryEnhancedRequest.Builder>>())
     }
 }
