@@ -13,7 +13,7 @@ common: &default_settings
   # account. For example, if your license key is 12345 use this:
   # license_key: '12345'
   # The key binds your Agent's data to your account in the New Relic service.
-  license_key: '<%= license_key %>'
+  license_key: ${NEW_RELIC_LICENSE_KEY}
 
   # Agent Enabled
   # Use this setting to disable the agent instead of removing it from the startup command.
@@ -29,7 +29,7 @@ common: &default_settings
   # app_name: My Application;My Application 2
   # This setting is required. Up to 3 different application names can be specified.
   # The first application name must be unique.
-  app_name: My Application
+  app_name: ${NEW_RELIC_APP_NAME}
 
   # To enable high security, set this property to true. When in high
   # security mode, the agent will use SSL and obfuscated SQL. Additionally,
@@ -385,17 +385,28 @@ common: &default_settings
 # NOTE if your application has other named environments, you should
 # provide configuration settings for these environments here.
 
-development:
-  <<: *default_settings
-  app_name: My Application (Development)
+#development:
+#  <<: *default_settings
+#  app_name: My Application (Development)
 
-test:
-  <<: *default_settings
-  app_name: My Application (Test)
+#test:
+#  <<: *default_settings
+#  app_name: My Application (Test)
 
-production:
-  <<: *default_settings
+#production:
+#  <<: *default_settings
 
-staging:
+#staging:
+#  <<: *default_settings
+#  app_name: My Application (Staging)
+
+qa:
   <<: *default_settings
-  app_name: My Application (Staging)
+  app_name: ${NEW_RELIC_APP_NAME}:qa
+prod:
+  <<: *default_settings
+  app_name: ${NEW_RELIC_APP_NAME}:prod
+
+jmx:
+  enabled: true
+  linkingMetadataMBean: true
