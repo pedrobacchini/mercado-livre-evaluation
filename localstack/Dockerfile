@@ -1,4 +1,4 @@
-FROM localstack/localstack:0.12.10
+FROM localstack/localstack:1.0.3
 
 COPY bin /docker-entrypoint-initaws.d
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <!--
+    https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#_environment_properties-->
+    <springProperty scope="context" name="service" source="newrelic.service.name"/>
+    <springProperty scope="local" name="level" source="newrelic.logging.level"
+                    defaultValue="INFO"/>
+    <springProperty scope="local" name="appender" source="newrelic.logging.appender"
+                    defaultValue="CONSOLE"/>
+
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+                <timestamp>[ignore]</timestamp>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <appender name="NEW_RELIC_ASYNC" class="com.newrelic.logging.logback.NewRelicAsyncAppender">
+        <appender-ref ref="JSON"/>
+    </appender>
+
+
+    <root level="${level}">
+        <appender-ref ref="${appender}"/>
+    </root>
+
+</configuration>
